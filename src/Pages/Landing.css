@@ -1,0 +1,128 @@
+/* =========================
+   Page Wrapper
+========================= */
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #65aa99 100%);
+}
+.landing {
+  padding: 4rem 5rem;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  gap: 3rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #65aa99 100%);
+}
+
+/* =========================
+   Text Section
+========================= */
+.landing-content h1 {
+  font-size: clamp(2.4rem, 4vw, 3.2rem);
+  line-height: 1.1;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+.landing-content h2 {
+  font-size: clamp(1.6rem, 3vw, 2rem);
+  font-weight: 600;
+  color: #0f766e;
+  margin-bottom: 1.25rem;
+}
+
+.landing-content p {
+  max-width: 480px;
+  font-size: 1.05rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+}
+
+/* =========================
+   CTA Buttons
+========================= */
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.primary-btn {
+  padding: 0.85rem 1.8rem;
+  border-radius: 999px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #0f766e, #147477);
+  color: #ffffff;
+  border: none;
+  width: 30%;
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(7, 71, 66, 0.35);
+}
+
+span {
+  color: #147477;
+}
+
+
+/* =========================
+   Image Section
+========================= */
+.landing-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.landing-visual img {
+  width: 100%;
+  max-width: 420px;
+  border-radius: 20px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Fallback mockup */
+.mockup-placeholder {
+  width: 320px;
+  height: 420px;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  color: #64748b;
+  font-weight: 600;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* =========================
+   Responsive
+========================= */
+@media (max-width: 900px) {
+  .landing {
+    grid-template-columns: 1fr;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
+  .landing-content p {
+    margin-inline: auto;
+  }
+
+  .cta-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .landing-visual img {
+    max-width: 320px;
+  }
+}
