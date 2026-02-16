@@ -1,3 +1,11 @@
+.body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  min-height: 100vh;
+  color: #333;
+  display: flex;
+}
 .navbar {
   background: rgba(102, 126, 234, 0.1); 
   backdrop-filter: blur(10px);
@@ -52,4 +60,15 @@
 
 .nav-container button:active {
   transform: translateY(0);
+}
+.welcomeText {
+  position: fixed;
+  top: 70px;
+  left: 20px;
+  margin: 0;
+  font-size: 2rem;
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 999;
 }

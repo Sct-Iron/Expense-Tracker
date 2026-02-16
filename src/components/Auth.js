@@ -1,13 +1,11 @@
 import React, { useState } from "react";
 import './Auth.css';
-
+import { doc, setDoc, serverTimestamp } from "firebase/firestore"; 
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from "firebase/auth";
-import { auth } from "../firebase";
-
-
+import { auth, db } from "../firebase";
 
 export default function ExpenseTrackerAuth({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -31,11 +29,18 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
         formData.password
       );
     } else {
-      await createUserWithEmailAndPassword(
+     const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
         formData.password
       );
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+  username: formData.name, 
+  email: formData.email,
+  createdAt: serverTimestamp(),
+    });   
     }
     onAuthSuccess();
   } catch (err) {

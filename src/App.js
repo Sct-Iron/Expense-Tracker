@@ -2,8 +2,8 @@ import React from 'react';
 import './App.css';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import ExpenseTrackerAuth from './components/Auth';
-import Dashboard from './Pages/Dashboard';
-import LandingPage from './Pages/Landing';
+import Dashboard from './pages/Dashboard';
+import LandingPage from './pages/Landing';
 
 function App() {
   const navigate = useNavigate();
