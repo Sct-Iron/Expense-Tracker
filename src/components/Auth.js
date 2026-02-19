@@ -71,6 +71,7 @@ const handleChange = (e) => {
     });
   }
   return (
+    <div className="auth-wrapper">
     <div className={`auth-container ${animation ? 'fade-in' : ''}`}>
 
       <h1>Expense Flow</h1>
@@ -118,6 +119,7 @@ const handleChange = (e) => {
         </div>
         <button className="switch-btn" type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
       </form>
+    </div>
     </div>
   );
 }
