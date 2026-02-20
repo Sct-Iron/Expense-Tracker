@@ -14,7 +14,8 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
   const handleSubmit = async (e) => {
@@ -29,6 +30,10 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
         formData.password
       );
     } else {
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        return;
+      }
      const userCredential = await createUserWithEmailAndPassword(
         auth,
         formData.email,
@@ -60,6 +65,8 @@ const handleChange = (e) => {
   triggerAnimation();
   setIsLogin(prev => !prev);
   setError('');
+  setFormData(prev => ({ ...prev, confirmPassword: '' }));
+  setShowPassword(false);
   };
   // Animation logic 
   const[animation, setAnimation] = useState(false);
@@ -116,6 +123,27 @@ const handleChange = (e) => {
             placeholder="Password"
             onChange={handleChange}
           />
+        </div>
+        {!isLogin && (
+          <div className="form-group">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              placeholder="Confirm Password"
+              onChange={handleChange}
+            />
+          </div>
+        )}
+        <div className="form-group">
+          <button
+            type="button"
+            className="switch-btn show-pass-btn"
+            onClick={() => setShowPassword(prev => !prev)}
+            aria-pressed={showPassword}
+          >
+            {showPassword ? 'Hide Password' : 'Show Password'}
+          </button>
         </div>
         <button className="switch-btn" type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
       </form>
