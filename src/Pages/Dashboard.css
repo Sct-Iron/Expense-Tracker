@@ -78,6 +78,55 @@ body {
   background: #e5e7eb;
 }
 
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-btn {
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-btn:hover { background: #e5e7eb; }
+
+.settings-icon { font-size: 1.05rem; line-height: 1; }
+
+/* Settings modal specific */
+.modal-header--settings { background: #374151; }
+.settings-option-btn {
+  display: inline-block;
+  width: 100%;
+  text-align: left;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #111827;
+  font-weight: 600;
+  cursor: pointer;
+}
+.settings-option-btn:hover { background: #f9fafb; }
+
+.currency-select {
+  width: 100%;
+  padding: 0.6rem 0.9rem;
+  border-radius: 10px;
+  border: 1.5px solid #e5e7eb;
+  font-size: 1rem;
+  outline: none;
+}
+.currency-select:focus { border-color: #6366f1; }
+
 /* ── Dashboard layout ── */
 .dashboard-container {
   max-width: 1280px;
@@ -308,6 +357,171 @@ body {
 .qa-btn--gray .qa-icon {
   background: #e5e7eb;
   color: #374151;
+}
+
+/* ── Append these rules to your existing Dashboard.css ── */
+
+/* Loading */
+.loading-screen {
+  display: flex; align-items: center; justify-content: center;
+  height: 100vh; font-size: 1.2rem; color: #888;
+}
+
+/* Negative balance */
+.card--negative .card-value { color: #ef4444; }
+
+/* ── Modal ─────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.modal {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  margin: 1rem;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+  animation: slideUp 0.2s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0 }
+  to   { transform: translateY(0);    opacity: 1 }
+}
+
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  color: #fff;
+}
+.modal-header--expense { background: #ef4444; }
+.modal-header--income  { background: #22c55e; }
+
+.modal-header h3 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+
+.modal-close {
+  background: rgba(255,255,255,0.25);
+  border: none; color: #fff; width: 28px; height: 28px;
+  border-radius: 50%; cursor: pointer; font-size: 0.8rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: rgba(255,255,255,0.4); }
+
+.modal-body { padding: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+
+.modal-error {
+  background: #fee2e2; color: #b91c1c;
+  padding: 0.6rem 0.9rem; border-radius: 8px;
+  font-size: 0.875rem;
+}
+
+.field-label {
+  font-size: 0.8rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: #6b7280; margin-bottom: -0.35rem;
+}
+
+.field-input {
+  width: 100%; padding: 0.65rem 0.9rem;
+  border: 1.5px solid #e5e7eb; border-radius: 10px;
+  font-size: 1rem; outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.field-input:focus { border-color: #6366f1; }
+
+.modal-footer {
+  display: flex; gap: 0.75rem; padding: 1rem 1.5rem 1.5rem;
+}
+
+.modal-cancel {
+  flex: 1; padding: 0.7rem;
+  border: 1.5px solid #e5e7eb; border-radius: 10px;
+  background: #fff; color: #374151; cursor: pointer; font-size: 0.95rem;
+}
+.modal-cancel:hover { background: #f9fafb; }
+
+.modal-save {
+  flex: 2; padding: 0.7rem;
+  border: none; border-radius: 10px;
+  color: #fff; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.modal-save:disabled { opacity: 0.6; cursor: not-allowed; }
+.modal-save--expense { background: #ef4444; }
+.modal-save--expense:hover:not(:disabled) { background: #dc2626; }
+.modal-save--income  { background: #22c55e; }
+.modal-save--income:hover:not(:disabled)  { background: #16a34a; }
+
+/* ── Transaction list ──────────────────────────────────── */
+.transaction-list {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  max-height: 340px; overflow-y: auto;
+}
+
+.transaction-item {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 10px; background: #f9fafb;
+  transition: background 0.15s;
+}
+.transaction-item:hover { background: #f3f4f6; }
+
+.tx-icon { font-size: 1.4rem; width: 2rem; text-align: center; flex-shrink: 0; }
+
+.tx-details {
+  flex: 1; display: flex; flex-direction: column; gap: 0.1rem;
+  min-width: 0;
+}
+.tx-category { font-weight: 600; font-size: 0.9rem; color: #111827; }
+.tx-desc     { font-size: 0.78rem; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.tx-amount { font-weight: 700; font-size: 0.95rem; flex-shrink: 0; }
+.tx-amount--income  { color: #16a34a; }
+.tx-amount--expense { color: #dc2626; }
+
+/* ── Breakdown ─────────────────────────────────────────── */
+.breakdown {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f3f4f6;
+}
+.breakdown h4 {
+  font-size: 0.85rem; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #9ca3af;
+  margin: 0 0 0.9rem;
+}
+
+.breakdown-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 6px;
+  column-gap: 0.5rem;
+  row-gap: 4px;
+  margin-bottom: 0.8rem;
+  font-size: 0.85rem;
+}
+.breakdown-row span:first-child { color: #374151; }
+.breakdown-row span:last-child  { color: #111827; font-weight: 600; }
+
+.breakdown-bar-track {
+  grid-column: 1 / -1;
+  background: #f3f4f6; border-radius: 99px; overflow: hidden;
+}
+.breakdown-bar {
+  height: 6px; background: #6366f1;
+  border-radius: 99px;
+  transition: width 0.4s ease;
 }
 
 /* ── Responsive ── */
