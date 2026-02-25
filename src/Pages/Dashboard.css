@@ -534,3 +534,226 @@ body {
   .summary-cards { grid-template-columns: 1fr; }
   .page-header h2 { font-size: 1.4rem; }
 }
+/* ==========================================================
+   Dark Mode Theme
+   Triggered when `.dark` exists on document root
+========================================================== */
+
+.dark body {
+  background: #071021;
+  color: #e6eef6;
+}
+
+
+/* ───────── Navbar ───────── */
+
+.dark .navbar {
+  background: #0b1220;
+  border-bottom: 1px solid #1f2937;
+}
+
+.dark .nav-container h1 {
+  color: #e6eef6;
+}
+
+.dark .nav-container h1 span {
+  color: #6366f1;
+}
+
+.dark .nav-icon {
+  background: #6366f1;
+  color: #fff;
+}
+
+.dark .logout-btn,
+.dark .settings-btn {
+  background: #0b1220;
+  color: #cbd5e1;
+  border-color: #1f2937;
+}
+
+.dark .logout-btn:hover,
+.dark .settings-btn:hover {
+  background: #111827;
+}
+
+
+/* ───────── Forms & Inputs ───────── */
+
+.dark .settings-option-btn {
+  background: #0f1724;
+  color: #e6eef6;
+  border-color: #1f2937;
+}
+
+.dark .currency-select,
+.dark .field-input,
+.dark input,
+.dark select {
+  background: #0b1220;
+  color: #e6eef6;
+  border-color: #1f2937;
+}
+
+
+/* ───────── Page Header ───────── */
+
+.dark .page-header h2 {
+  color: #e6eef6;
+}
+
+.dark .page-header p {
+  color: #9aa6b2;
+}
+
+
+/* ───────── Cards ───────── */
+
+.dark .card {
+  background: #0f1724;
+  border-color: #1f2937;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+.dark .card--primary {
+  background: linear-gradient(135deg, #334edb, #4f46e5);
+}
+
+.dark .card-label {
+  color: #9aa6b2;
+}
+
+.dark .card-value {
+  color: #e6eef6;
+}
+
+.dark .card-badge {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+
+/* ───────── Panels ───────── */
+
+.dark .transactions-panel,
+.dark .quick-actions-panel {
+  background: #0f1724;
+  border-color: #1f2937;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+
+.dark .panel-header h3 {
+  color: #e6eef6;
+}
+
+.dark .panel-sub {
+  color: #9aa6b2;
+}
+
+.dark .empty-state {
+  color: #9aa6b2;
+}
+
+
+/* ───────── Quick Actions ───────── */
+
+.dark .qa-btn--gray {
+  background: #0b1220;
+  color: #cbd5e1;
+}
+
+.dark .qa-btn--gray .qa-icon {
+  background: #111827;
+  color: #cbd5e1;
+}
+
+
+/* ───────── Loading ───────── */
+
+.dark .loading-screen {
+  color: #9aa6b2;
+}
+
+
+/* ───────── Modal ───────── */
+
+.dark .modal {
+  background: #0b1220;
+  color: #e6eef6;
+  border: 1px solid #1f2937;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+}
+
+.dark .modal-header {
+  color: #fff;
+}
+
+.dark .modal-close {
+  background: rgba(255, 255, 255, 0.04);
+  color: #e6eef6;
+}
+
+.dark .modal-error {
+  background: #3b1416;
+  color: #fca5a5;
+}
+
+.dark .modal-cancel {
+  background: #0b1220;
+  color: #cbd5e1;
+  border-color: #1f2937;
+}
+
+
+/* ───────── Transactions ───────── */
+
+.dark .transaction-item {
+  background: #071224;
+}
+
+.dark .transaction-item:hover {
+  background: #0b1520;
+}
+
+.dark .tx-category {
+  color: #e6eef6;
+}
+
+.dark .tx-desc {
+  color: #9aa6b2;
+}
+
+.dark .tx-amount--income {
+  color: #16a34a;
+}
+
+.dark .tx-amount--expense {
+  color: #ef4444;
+}
+
+
+/* ───────── Breakdown ───────── */
+
+.dark .breakdown {
+  border-top-color: #111827;
+}
+
+.dark .breakdown h4 {
+  color: #9aa6b2;
+}
+
+.dark .breakdown-row span:first-child {
+  color: #cbd5e1;
+}
+
+.dark .breakdown-row span:last-child {
+  color: #e6eef6;
+}
+
+.dark .breakdown-bar-track {
+  background: #0b1220;
+}
+
+.dark .breakdown-bar {
+  background: #6366f1;
+}

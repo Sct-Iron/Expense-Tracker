@@ -11,3 +11,32 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Minimal dark theme overrides (toggled by adding `dark` class to <html>) */
+:root {
+  --bg: #f0f2f5;
+  --text: #111827;
+  --surface: #ffffff;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+.dark body {
+  background: #0b1220;
+  color: #e6eef6;
+}
+
+.dark .navbar,
+.dark .transactions-panel,
+.dark .quick-actions-panel,
+.dark .card,
+.dark .modal {
+  background: #0f1724 !important;
+  color: #e6eef6 !important;
+  border-color: #1f2937 !important;
+}
+
+.dark .nav-icon { background: #6366f1 !important; color: #fff !important }
+.dark .logout-btn, .dark .settings-btn, .dark .qa-btn--gray { background: #0b1220 !important; color: #cbd5e1 !important }
+.dark .currency-select, .dark input, .dark select { background: #0b1220 !important; color: #e6eef6 !important; border-color: #1f2937 !important }
+

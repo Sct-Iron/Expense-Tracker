@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import {
-  doc, getDoc,
+  doc, getDoc, updateDoc,
   collection, query, orderBy, onSnapshot,
   addDoc, serverTimestamp
 } from "firebase/firestore";
@@ -99,7 +99,31 @@ function AddTransactionModal({ type, onClose, onSave, currency }) {
 }
 
 // ── Settings Modal ──────────────────────────────────────────────────────────
-function SettingsModal({ onClose, currency, setCurrency }) {
+
+function SettingsModal({ onClose, currency, setCurrency, user }) {
+  const [theme, setTheme] = useState(() => {
+    try { return localStorage.getItem('theme') || 'light' } catch { return 'light' }
+  })
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (theme === 'dark') root.classList.add('dark')
+    else root.classList.remove('dark')
+    try { localStorage.setItem('theme', theme) } catch {}
+  }, [theme])
+
+  const toggleTheme = async () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setTheme(next)
+    if (user && user.uid) {
+      try {
+        await updateDoc(doc(db, 'users', user.uid), { theme: next })
+      } catch (e) {
+        console.warn('Failed to persist theme to user profile', e)
+      }
+    }
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
@@ -123,6 +147,17 @@ function SettingsModal({ onClose, currency, setCurrency }) {
             <option value="GBP">GBP — £</option>
             <option value="JPY">JPY — ¥</option>
           </select>
+
+          <div style={{ marginTop: '1rem' }}>
+            <label className="field-label">Theme</label>
+            <button
+              type="button"
+              className="settings-option-btn"
+              onClick={toggleTheme}
+            >
+              {theme === 'dark' ? 'Disable Dark Mode' : 'Enable Dark Mode'}
+            </button>
+          </div>
         </div>
 
         <div className="modal-footer">
@@ -194,6 +229,16 @@ useEffect(() => {
     if (snap.exists()) {
       setUsername(snap.data().username || '');
       setCurrency(snap.data().currency || 'USD');
+      const userTheme = snap.data().theme
+      try {
+        if (userTheme === 'dark') {
+          document.documentElement.classList.add('dark')
+          localStorage.setItem('theme', 'dark')
+        } else {
+          document.documentElement.classList.remove('dark')
+          localStorage.setItem('theme', 'light')
+        }
+      } catch {}
     }
   };
   fetchUser();
@@ -269,6 +314,7 @@ const handleSave = useCallback(async ({ type, amount, category, description }) =
           onClose={() => setSettingsOpen(false)}
           currency={currency}
           setCurrency={setCurrency}
+          user={user}
         />
       )}
 
