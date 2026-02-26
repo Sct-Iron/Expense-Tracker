@@ -6,8 +6,10 @@ import {
   collection, query, orderBy, onSnapshot,
   addDoc, serverTimestamp
 } from "firebase/firestore";
+import { getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebase";
+import { getExchangeRate } from "../components/exchange";
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function AddTransactionModal({ type, onClose, onSave, currency }) {
@@ -105,6 +107,9 @@ function SettingsModal({ onClose, currency, setCurrency, user }) {
     try { return localStorage.getItem('theme') || 'light' } catch { return 'light' }
   })
 
+  const [changing, setChanging] = useState(false);
+  const [changeError, setChangeError] = useState('');
+
   useEffect(() => {
     const root = document.documentElement
     if (theme === 'dark') root.classList.add('dark')
@@ -139,7 +144,20 @@ function SettingsModal({ onClose, currency, setCurrency, user }) {
           <select
             className="currency-select"
             value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
+            onChange={async (e) => {
+              const next = e.target.value;
+              setChangeError('');
+              if (next === currency) return;
+              setChanging(true);
+              try {
+                // Ask parent to perform conversion and persist change
+                if (typeof setCurrency === 'function') await setCurrency(next, setChangeError);
+              } catch (err) {
+                setChangeError(err?.message || 'Failed to change currency');
+              } finally {
+                setChanging(false);
+              }
+            }}
           >
             <option value="USD">USD — $</option>
             <option value="NGN">NGN — ₦</option>
@@ -147,7 +165,8 @@ function SettingsModal({ onClose, currency, setCurrency, user }) {
             <option value="GBP">GBP — £</option>
             <option value="JPY">JPY — ¥</option>
           </select>
-
+          {changing && <div className="modal-info">Updating currency and converting transactions…</div>}
+          {changeError && <div className="modal-error">{changeError}</div>}
           <div style={{ marginTop: '1rem' }}>
             <label className="field-label">Theme</label>
             <button
@@ -269,6 +288,53 @@ const handleSave = useCallback(async ({ type, amount, category, description }) =
   });
 }, [user]);
 
+  //Exchange rate and currency change handler
+  const handleCurrencyChange = useCallback(async (nextCurrency, setChangeError) => {
+    if (!user || !user.uid) {
+      const msg = 'Not authenticated';
+      if (setChangeError) setChangeError(msg);
+      throw new Error(msg);
+    }
+    const from = currency;
+    if (from === nextCurrency) return;
+
+    try {
+      const rate = await getExchangeRate(from, nextCurrency);
+      if (rate == null) {
+        const msg = 'Unable to fetch exchange rate. Please try again later.';
+        if (setChangeError) setChangeError(msg);
+        throw new Error(msg);
+      }
+
+      const txCol = collection(db, 'users', user.uid, 'transactions');
+      const snap = await getDocs(txCol);
+
+      const updates = snap.docs.map(d => {
+        const data = d.data();
+        if (typeof data.amount === 'number') {
+          const converted = parseFloat((data.amount * rate).toFixed(2));
+          return updateDoc(
+            doc(db, 'users', user.uid, 'transactions', d.id),
+            { amount: converted }
+          );
+        }
+        return null;
+      }).filter(Boolean);
+
+      await Promise.all(updates);
+
+      await updateDoc(doc(db, 'users', user.uid), {
+        currency: nextCurrency
+      });
+
+      setCurrency(nextCurrency);
+    } catch (err) {
+      console.error('Currency change failed', err);
+      if (setChangeError) setChangeError(err?.message || 'Currency conversion failed');
+      throw err;
+    }
+  }, [user, currency]);
+
   // Derived totals
   const totalIncome   = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
   const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
@@ -313,7 +379,7 @@ const handleSave = useCallback(async ({ type, amount, category, description }) =
         <SettingsModal
           onClose={() => setSettingsOpen(false)}
           currency={currency}
-          setCurrency={setCurrency}
+          setCurrency={handleCurrencyChange}
           user={user}
         />
       )}
