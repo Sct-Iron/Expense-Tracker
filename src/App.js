@@ -9,7 +9,7 @@ function App() {
   const navigate = useNavigate();
 
   const handleAuthSuccess = () => {
-    navigate('/dashboard');
+    navigate('/Dashboard');
   };
 
   return (
