@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Landing.css";
-
+import mockup from "../Images/mockup.jpeg";
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -31,8 +31,7 @@ export default function LandingPage() {
       </div>
 
       <div className="landing-visual">
-        {/* <img src={heroMockup} alt="Expense tracker preview" /> */}
-        <div className="mockup-placeholder">App Mockup</div>
+        <img src={mockup} alt="Expense tracker preview" />
       </div>
     </div>
   );

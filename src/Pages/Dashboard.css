@@ -485,6 +485,7 @@ body {
 }
 .tx-category { font-weight: 600; font-size: 0.9rem; color: #111827; }
 .tx-desc     { font-size: 0.78rem; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-date     { font-size: 0.72rem; color: #6b7280; }
 
 .tx-amount { font-weight: 700; font-size: 0.95rem; flex-shrink: 0; }
 .tx-amount--income  { color: #16a34a; }
@@ -731,6 +732,9 @@ body {
   color: #ef4444;
 }
 
+.dark .tx-date {
+  color: #9aa6b2;
+}
 
 /* ───────── Breakdown ───────── */
 
@@ -756,4 +760,249 @@ body {
 
 .dark .breakdown-bar {
   background: #6366f1;
+}
+.budgets-section {
+  margin-bottom: 2rem;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.section-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #111827);
+  margin: 0 0 0.15rem 0;
+}
+
+.add-budget-btn {
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.add-budget-btn:hover {
+  background: #4f46e5;
+}
+
+.add-budget-btn--cta {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.95rem;
+}
+
+.empty-state--budget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2.5rem 1rem;
+}
+
+.budgets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* ── Budget Card ─────────────────────────────────────────────────────────────── */
+
+.budget-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: box-shadow 0.15s;
+}
+
+.budget-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.budget-card--over {
+  border-color: #fca5a5;
+  background: #fff7f7;
+}
+
+.dark .budget-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.dark .budget-card--over {
+  background: #2d1a1a;
+  border-color: #ef4444;
+}
+
+.budget-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.budget-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.budget-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.budget-category {
+  display: block;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary, #111827);
+}
+
+.dark .budget-category {
+  color: #f9fafb;
+}
+
+.budget-period-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  background: #ede9fe;
+  color: #6d28d9;
+  border-radius: 99px;
+  padding: 0.1rem 0.5rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-top: 0.15rem;
+}
+
+.dark .budget-period-badge {
+  background: #2e1a4a;
+  color: #c4b5fd;
+}
+
+.budget-card-actions {
+  display: flex;
+  gap: 0.3rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.budget-card:hover .budget-card-actions {
+  opacity: 1;
+}
+
+.budget-action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  padding: 0.2rem 0.3rem;
+  border-radius: 6px;
+  transition: background 0.1s;
+}
+
+.budget-action-btn:hover {
+  background: #f3f4f6;
+}
+
+.budget-action-btn--delete:hover {
+  background: #fee2e2;
+}
+
+.dark .budget-action-btn:hover {
+  background: #374151;
+}
+
+.budget-amounts {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.budget-spent {
+  font-weight: 600;
+  color: #374151;
+}
+
+.dark .budget-spent {
+  color: #d1d5db;
+}
+
+.budget-limit {
+  color: #9ca3af;
+}
+
+.budget-bar-track {
+  width: 100%;
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.dark .budget-bar-track {
+  background: #374151;
+}
+
+.budget-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.budget-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.budget-remaining {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.budget-over-msg {
+  color: #ef4444;
+  font-weight: 600;
+  font-size: 0.78rem;
+}
+
+.budget-pct {
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+/* ── Budget Modal header ─────────────────────────────────────────────────────── */
+
+.modal-header--budget {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.modal-save--budget {
+  background: #6366f1;
+}
+
+.modal-save--budget:hover {
+  background: #4f46e5;
+}
+
+.modal-info {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
 }
