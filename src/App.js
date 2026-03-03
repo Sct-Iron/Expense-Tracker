@@ -9,7 +9,7 @@ function App() {
   const navigate = useNavigate();
 
   const handleAuthSuccess = () => {
-    navigate('/dashboard');
+    navigate('/Dashboard');                            
   };
 
   return (
@@ -17,7 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<ExpenseTrackerAuth onAuthSuccess={handleAuthSuccess} />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/Dashboard" element={<Dashboard />} />
       </Routes>
     </div>
   );
