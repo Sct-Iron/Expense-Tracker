@@ -189,14 +189,6 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
               : (isLogin ? 'Sign In' : 'Create Account')}
           </button>
         </form>
-
-        <p>
-          {isLogin ? "Don't have an account? " : 'Already have an account? '}
-          <button className="switch-btn" type="button" onClick={toggleMode}>
-            {isLogin ? 'Sign Up' : 'Login'}
-          </button>
-        </p>
-
       </div>
     </div>
   );
