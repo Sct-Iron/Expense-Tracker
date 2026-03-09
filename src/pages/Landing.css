@@ -5,6 +5,7 @@ body {
   margin: 0;
   font-family: "Inter", system-ui, sans-serif;
 }
+
 .landing {
   padding: 4rem 5rem;
   display: grid;
@@ -50,7 +51,7 @@ body {
   gap: 1rem;
 }
 
-.primary-btn {
+.landing .primary-btn {
   padding: 0.85rem 1.8rem;
   border-radius: 999px;
   font-size: 0.95rem;
@@ -64,12 +65,12 @@ body {
   width: 30%;
 }
 
-.primary-btn:hover {
+.landing .primary-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(7, 71, 66, 0.35);
 }
 
-span {
+.landing-content span {
   color: #147477;
 }
 
@@ -121,10 +122,12 @@ span {
     justify-content: center;
     flex-wrap: wrap;
   }
-  .primary-btn {
+
+  .landing .primary-btn {
     width: 50%;
     padding: 0.85rem 2.5rem;
   }
+
   .landing-visual img {
     max-width: 100%;
   }

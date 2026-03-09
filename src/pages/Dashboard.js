@@ -12,16 +12,22 @@ import { db } from "../firebase";
 import { getExchangeRate } from "../components/exchange";
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
-function AddTransactionModal({ type, onClose, onSave, currency }) {
-  const [amount, setAmount]       = useState('');
-  const [category, setCategory]   = useState('');
-  const [description, setDesc]    = useState('');
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState('');
+function AddTransactionModal({ type, onClose, onSave, currency, customCategories = [] }) {
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('');
+  const [customCategory, setCustomCat] = useState('');
+  const [description, setDesc] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const expenseCategories = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping', 'Other'];
-  const incomeCategories  = ['Salary', 'Freelance', 'Investment', 'Gift', 'Other'];
-  const categories = type === 'expense' ? expenseCategories : incomeCategories;
+  const defaultExpense = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping'];
+  const defaultIncome = ['Salary', 'Freelance', 'Investment', 'Gift'];
+  const defaults = type === 'expense' ? defaultExpense : defaultIncome;
+  // Merge saved custom categories (before "Other") — deduplicate
+  const merged = [...defaults, ...customCategories.filter(c => !defaults.includes(c))];
+  const categories = [...merged, 'Other'];
+
+  const resolvedCategory = category === 'Other' ? customCategory.trim() : category;
 
   const handleSubmit = async () => {
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
@@ -32,9 +38,13 @@ function AddTransactionModal({ type, onClose, onSave, currency }) {
       setError('Please select a category.');
       return;
     }
+    if (category === 'Other' && !customCategory.trim()) {
+      setError('Please enter a custom category name.');
+      return;
+    }
     setLoading(true);
     try {
-      await onSave({ type, amount: parseFloat(amount), category, description });
+      await onSave({ type, amount: parseFloat(amount), category: resolvedCategory, description });
       onClose();
     } catch (e) {
       setError('Failed to save. Please try again.');
@@ -69,11 +79,24 @@ function AddTransactionModal({ type, onClose, onSave, currency }) {
           <select
             className="field-input"
             value={category}
-            onChange={e => setCategory(e.target.value)}
+            onChange={e => { setCategory(e.target.value); setCustomCat(''); }}
           >
             <option value="">— Select —</option>
             {categories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
+
+          {category === 'Other' && (
+            <input
+              className="field-input"
+              style={{ marginTop: '10px' }}
+              type="text"
+              placeholder="Enter custom category name…"
+              value={customCategory}
+              onChange={e => setCustomCat(e.target.value)}
+              autoFocus
+              maxLength={40}
+            />
+          )}
 
           <label className="field-label">Description (optional)</label>
           <input
@@ -101,20 +124,26 @@ function AddTransactionModal({ type, onClose, onSave, currency }) {
 }
 
 // ── Budget Modal ──────────────────────────────────────────────────────────────
-function AddBudgetModal({ onClose, onSave, currency, existingBudget }) {
-  const allCategories = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping', 'Other'];
+function AddBudgetModal({ onClose, onSave, currency, existingBudget, customCategories = [] }) {
+  const defaultBudgetCats = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping'];
+  const merged = [...defaultBudgetCats, ...customCategories.filter(c => !defaultBudgetCats.includes(c))];
+  const allCategories = [...merged, 'Other'];
   const [category, setCategory] = useState(existingBudget?.category || '');
-  const [amount, setAmount]     = useState(existingBudget?.amount?.toString() || '');
-  const [period, setPeriod]     = useState(existingBudget?.period || 'monthly');
-  const [loading, setLoading]   = useState(false);
-  const [error, setError]       = useState('');
+  const [customCategory, setCustomCat] = useState('');
+  const [amount, setAmount] = useState(existingBudget?.amount?.toString() || '');
+  const [period, setPeriod] = useState(existingBudget?.period || 'monthly');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const resolvedCategory = category === 'Other' ? customCategory.trim() : category;
 
   const handleSubmit = async () => {
     if (!category) { setError('Please select a category.'); return; }
+    if (category === 'Other' && !customCategory.trim()) { setError('Please enter a custom category name.'); return; }
     if (!amount || isNaN(amount) || parseFloat(amount) <= 0) { setError('Please enter a valid amount.'); return; }
     setLoading(true);
     try {
-      await onSave({ category, amount: parseFloat(amount), period });
+      await onSave({ category: resolvedCategory, amount: parseFloat(amount), period });
       onClose();
     } catch (e) {
       setError('Failed to save budget. Please try again.');
@@ -138,12 +167,25 @@ function AddBudgetModal({ onClose, onSave, currency, existingBudget }) {
           <select
             className="field-input"
             value={category}
-            onChange={e => setCategory(e.target.value)}
+            onChange={e => { setCategory(e.target.value); setCustomCat(''); }}
             disabled={!!existingBudget}
           >
             <option value="">— Select —</option>
             {allCategories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
+
+          {category === 'Other' && !existingBudget && (
+            <input
+              className="field-input"
+              style={{ marginTop: '10px' }}
+              type="text"
+              placeholder="Enter custom category name…"
+              value={customCategory}
+              onChange={e => setCustomCat(e.target.value)}
+              autoFocus
+              maxLength={40}
+            />
+          )}
 
           <label className="field-label">Budget Period</label>
           <select
@@ -199,7 +241,7 @@ function SettingsModal({ onClose, currency, setCurrency, user }) {
     const root = document.documentElement
     if (theme === 'dark') root.classList.add('dark')
     else root.classList.remove('dark')
-    try { localStorage.setItem('theme', theme) } catch {}
+    try { localStorage.setItem('theme', theme) } catch { }
   }, [theme])
 
   const toggleTheme = async () => {
@@ -392,15 +434,17 @@ function BudgetCard({ budget, transactions, currency, onEdit, onDelete }) {
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [user, setUser]               = useState(null);
-  const [username, setUsername]       = useState('');
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState('');
   const [transactions, setTransactions] = useState([]);
-  const [budgets, setBudgets]         = useState([]);
-  const [modal, setModal]             = useState(null); 
+  const [budgets, setBudgets] = useState([]);
+  const [modal, setModal] = useState(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [budgetModalOpen, setBudgetModalOpen] = useState(false);
   const [editingBudget, setEditingBudget] = useState(null);
-  const [currency, setCurrency]       = useState('USD');
+  const [currency, setCurrency] = useState('USD');
+  const [customExpenseCats, setCustomExpenseCats] = useState([]);
+  const [customIncomeCats, setCustomIncomeCats] = useState([]);
 
   // Auth listener
   useEffect(() => {
@@ -420,6 +464,8 @@ export default function Dashboard() {
       if (snap.exists()) {
         setUsername(snap.data().username || '');
         setCurrency(snap.data().currency || 'USD');
+        setCustomExpenseCats(snap.data().customExpenseCategories || []);
+        setCustomIncomeCats(snap.data().customIncomeCategories || []);
         const userTheme = snap.data().theme;
         try {
           if (userTheme === 'dark') {
@@ -429,7 +475,7 @@ export default function Dashboard() {
             document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', 'light');
           }
-        } catch {}
+        } catch { }
       }
     };
     fetchUser();
@@ -463,12 +509,33 @@ export default function Dashboard() {
     navigate('/');
   };
 
+  // Helper to persist a new custom category to Firestore
+  const saveCustomCategory = useCallback(async (catName, type) => {
+    if (!user || !catName) return;
+    const defaultExpense = ['Food', 'Transport', 'Housing', 'Entertainment', 'Health', 'Shopping', 'Other'];
+    const defaultIncome = ['Salary', 'Freelance', 'Investment', 'Gift', 'Other'];
+    // Only save if it's not a built-in category
+    if (defaultExpense.includes(catName) || defaultIncome.includes(catName)) return;
+
+    if (type === 'expense' && !customExpenseCats.includes(catName)) {
+      const updated = [...customExpenseCats, catName];
+      setCustomExpenseCats(updated);
+      await updateDoc(doc(db, 'users', user.uid), { customExpenseCategories: updated });
+    } else if (type === 'income' && !customIncomeCats.includes(catName)) {
+      const updated = [...customIncomeCats, catName];
+      setCustomIncomeCats(updated);
+      await updateDoc(doc(db, 'users', user.uid), { customIncomeCategories: updated });
+    }
+  }, [user, customExpenseCats, customIncomeCats]);
+
   const handleSave = useCallback(async ({ type, amount, category, description }) => {
     await addDoc(collection(db, 'users', user.uid, 'transactions'), {
       type, amount, category, description,
       createdAt: serverTimestamp()
     });
-  }, [user]);
+    // If this is a custom category, save it for future use
+    await saveCustomCategory(category, type);
+  }, [user, saveCustomCategory]);
 
   // Save or update a budget
   const handleSaveBudget = useCallback(async ({ category, amount, period }) => {
@@ -488,7 +555,9 @@ export default function Dashboard() {
       });
     }
     setEditingBudget(null);
-  }, [user, budgets, editingBudget]);
+    // Save custom budget category for future use (treat as expense type)
+    await saveCustomCategory(category, 'expense');
+  }, [user, budgets, editingBudget, saveCustomCategory]);
 
   const handleDeleteBudget = useCallback(async (budgetId) => {
     if (!window.confirm('Delete this budget?')) return;
@@ -554,10 +623,10 @@ export default function Dashboard() {
   }, [user, currency]);
 
   // Derived totals
-  const totalIncome   = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
   const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-  const balance       = totalIncome - totalExpenses;
-  const savings       = Math.max(0, balance);
+  const balance = totalIncome - totalExpenses;
+  const savings = Math.max(0, balance);
 
   const overBudgetCount = budgets.filter(b => {
     const periodStart = getPeriodStart(b.period);
@@ -582,6 +651,7 @@ export default function Dashboard() {
           onClose={() => setModal(null)}
           onSave={handleSave}
           currency={currency}
+          customCategories={modal === 'expense' ? customExpenseCats : customIncomeCats}
         />
       )}
 
@@ -591,6 +661,7 @@ export default function Dashboard() {
           onSave={handleSaveBudget}
           currency={currency}
           existingBudget={editingBudget}
+          customCategories={customExpenseCats}
         />
       )}
 
@@ -762,11 +833,11 @@ export default function Dashboard() {
             <div className="quick-actions">
               <button className="qa-btn qa-btn--red" onClick={() => setModal('expense')}>
                 <span className="qa-icon">−</span>
-                <span>Add<br/>Expense</span>
+                <span>Add<br />Expense</span>
               </button>
               <button className="qa-btn qa-btn--green" onClick={() => setModal('income')}>
                 <span className="qa-icon">+</span>
-                <span>Add<br/>Income</span>
+                <span>Add<br />Income</span>
               </button>
             </div>
 
