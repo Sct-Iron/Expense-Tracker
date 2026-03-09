@@ -160,16 +160,6 @@ body {
   line-height: 1.5;
 }
 
-/* Animated divider */
-.tagline::after {
-  content: '';
-  display: block;
-  width: 48px;
-  height: 3px;
-  background: linear-gradient(90deg, #5eead4, #99f6e4);
-  border-radius: 999px;
-  margin: 12px auto 0;
-}
 
 /* ── Toggle Bar ──────────────────────────────────────────────────────────────── */
 .toggle-bar {
