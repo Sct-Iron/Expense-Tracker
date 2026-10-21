@@ -10,6 +10,30 @@ import { getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { db } from "../firebase";
 import { getExchangeRate } from "../components/exchange";
+import {
+  Utensils,
+  Car,
+  Home,
+  Film,
+  Pill,
+  ShoppingBag,
+  Briefcase,
+  Laptop,
+  TrendingUp,
+  Gift,
+  Box,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+  Wallet,
+  Settings,
+  CreditCard,
+  TrendingDown,
+  PiggyBank,
+  Target,
+  Receipt,
+  X
+} from 'lucide-react';
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
 function AddTransactionModal({ type, onClose, onSave, currency, customCategories = [] }) {
@@ -58,7 +82,9 @@ function AddTransactionModal({ type, onClose, onSave, currency, customCategories
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className={`modal-header modal-header--${type}`}>
           <h3>{type === 'expense' ? '− Add Expense' : '+ Add Income'}</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            <X size={16} />
+          </button>
         </div>
 
         <div className="modal-body">
@@ -156,8 +182,13 @@ function AddBudgetModal({ onClose, onSave, currency, existingBudget, customCateg
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header modal-header--budget">
-          <h3>{existingBudget ? '✏️ Edit Budget' : '🎯 Add Budget'}</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {existingBudget ? <Pencil size={18} /> : <Target size={18} />}
+            {existingBudget ? 'Edit Budget' : 'Add Budget'}
+          </h3>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            <X size={16} />
+          </button>
         </div>
 
         <div className="modal-body">
@@ -261,7 +292,9 @@ function SettingsModal({ onClose, currency, setCurrency, user }) {
       <div className="modal" onClick={e => e.stopPropagation()}>
         <div className={`modal-header modal-header--settings`}>
           <h3>Settings</h3>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            <X size={16} />
+          </button>
         </div>
 
         <div className="modal-body">
@@ -336,9 +369,17 @@ const formatCurrency = (n, currencyCode = 'USD') => {
 };
 
 const CATEGORY_ICONS = {
-  Food: '🍔', Transport: '🚗', Housing: '🏠', Entertainment: '🎬',
-  Health: '💊', Shopping: '🛍️', Salary: '💼', Freelance: '💻',
-  Investment: '📈', Gift: '🎁', Other: '📦'
+  Food: Utensils,
+  Transport: Car,
+  Housing: Home,
+  Entertainment: Film,
+  Health: Pill,
+  Shopping: ShoppingBag,
+  Salary: Briefcase,
+  Freelance: Laptop,
+  Investment: TrendingUp,
+  Gift: Gift,
+  Other: Box
 };
 
 const CURRENCY_SYMBOLS = {
@@ -395,15 +436,24 @@ function BudgetCard({ budget, transactions, currency, onEdit, onDelete }) {
     <div className={`budget-card ${over ? 'budget-card--over' : ''}`}>
       <div className="budget-card-header">
         <div className="budget-card-title">
-          <span className="budget-icon">{CATEGORY_ICONS[budget.category] || '📦'}</span>
+          <span className="budget-icon">
+            {(() => {
+              const IconComponent = CATEGORY_ICONS[budget.category] || Box;
+              return <IconComponent size={20} />;
+            })()}
+          </span>
           <div>
             <span className="budget-category">{budget.category}</span>
             <span className="budget-period-badge">{budget.period}</span>
           </div>
         </div>
         <div className="budget-card-actions">
-          <button className="budget-action-btn" onClick={() => onEdit(budget)} title="Edit">✏️</button>
-          <button className="budget-action-btn budget-action-btn--delete" onClick={() => onDelete(budget.id)} title="Delete">🗑️</button>
+          <button className="budget-action-btn" onClick={() => onEdit(budget)} title="Edit" aria-label="Edit">
+            <Pencil size={14} />
+          </button>
+          <button className="budget-action-btn budget-action-btn--delete" onClick={() => onDelete(budget.id)} title="Delete" aria-label="Delete">
+            <Trash2 size={14} />
+          </button>
         </div>
       </div>
 
@@ -421,7 +471,9 @@ function BudgetCard({ budget, transactions, currency, onEdit, onDelete }) {
 
       <div className="budget-footer">
         {over ? (
-          <span className="budget-over-msg">⚠️ Over budget by {formatCurrency(Math.abs(remaining), currency)}</span>
+          <span className="budget-over-msg" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <AlertTriangle size={14} /> Over budget by {formatCurrency(Math.abs(remaining), currency)}
+          </span>
         ) : (
           <span className="budget-remaining">{formatCurrency(remaining, currency)} remaining</span>
         )}
@@ -668,7 +720,7 @@ export default function Dashboard() {
       <nav className="navbar">
         <div className="nav-container">
           <div className="nav-brand">
-            <div className="nav-icon">📊</div>
+            <div className="nav-icon"><Wallet size={18} /></div>
             <h1>Expense <span>Flow</span></h1>
           </div>
           <div className="nav-actions">
@@ -678,7 +730,7 @@ export default function Dashboard() {
               aria-label="Settings"
               title="Settings"
             >
-              <span className="settings-icon">⚙️</span>
+              <span className="settings-icon"><Settings size={18} /></span>
             </button>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </div>
@@ -707,7 +759,7 @@ export default function Dashboard() {
           <div className={`card card--primary ${balance < 0 ? 'card--negative' : ''}`}>
             <div className="card-top">
               <span className="card-label">Total Balance</span>
-              <div className="card-icon">💳</div>
+              <div className="card-icon"><CreditCard size={20} /></div>
             </div>
             <div className="card-value">{formatCurrency(balance, currency)}</div>
             <div className="card-badge">
@@ -716,7 +768,7 @@ export default function Dashboard() {
           </div>
 
           <div className="card">
-            <div className="card-icon-circle card-icon-circle--green">↑</div>
+            <div className="card-icon-circle card-icon-circle--green"><TrendingUp size={18} /></div>
             <span className="card-label">Total Income</span>
             <div className="card-value">{formatCurrency(totalIncome, currency)}</div>
             <div className="card-sub card-sub--green">
@@ -725,7 +777,7 @@ export default function Dashboard() {
           </div>
 
           <div className="card">
-            <div className="card-icon-circle card-icon-circle--red">↓</div>
+            <div className="card-icon-circle card-icon-circle--red"><TrendingDown size={18} /></div>
             <span className="card-label">Total Expenses</span>
             <div className="card-value">{formatCurrency(totalExpenses, currency)}</div>
             <div className="card-sub card-sub--red">
@@ -734,7 +786,7 @@ export default function Dashboard() {
           </div>
 
           <div className="card">
-            <div className="card-icon-circle card-icon-circle--purple">🐷</div>
+            <div className="card-icon-circle card-icon-circle--purple"><PiggyBank size={18} /></div>
             <span className="card-label">Savings</span>
             <div className="card-value">{formatCurrency(savings, currency)}</div>
             <div className="card-sub card-sub--purple">
@@ -749,9 +801,22 @@ export default function Dashboard() {
             <div>
               <h3>Budgets</h3>
               <p className="panel-sub">
-                {budgets.length === 0
-                  ? 'No budgets set'
-                  : `${budgets.length} budget${budgets.length > 1 ? 's' : ''}${overBudgetCount > 0 ? ` · ⚠️ ${overBudgetCount} over limit` : ''}`}
+                {budgets.length === 0 ? (
+                  'No budgets set'
+                ) : (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                    <span>{budgets.length} budget{budgets.length > 1 ? 's' : ''}</span>
+                    {overBudgetCount > 0 && (
+                      <>
+                        <span>·</span>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#ef4444' }}>
+                          <AlertTriangle size={13} />
+                          {overBudgetCount} over limit
+                        </span>
+                      </>
+                    )}
+                  </span>
+                )}
               </p>
             </div>
             <button
@@ -764,7 +829,7 @@ export default function Dashboard() {
 
           {budgets.length === 0 ? (
             <div className="empty-state empty-state--budget">
-              <div className="empty-icon">🎯</div>
+              <div className="empty-icon"><Target size={40} /></div>
               <p>Set spending limits for each category to track your budget goals.</p>
               <button
                 className="add-budget-btn add-budget-btn--cta"
@@ -805,24 +870,27 @@ export default function Dashboard() {
 
             {transactions.length === 0 ? (
               <div className="empty-state">
-                <div className="empty-icon">🧾</div>
+                <div className="empty-icon"><Receipt size={40} /></div>
                 <p>Your transactions will appear here once you add income or expenses.</p>
               </div>
             ) : (
               <ul className="transaction-list">
-                {transactions.slice(0, 8).map(t => (
-                  <li key={t.id} className="transaction-item">
-                    <div className="tx-icon">{CATEGORY_ICONS[t.category] || '📦'}</div>
-                    <div className="tx-details">
-                      <span className="tx-category">{t.category}</span>
-                      {t.description && <span className="tx-desc">{t.description}</span>}
-                      <span className="tx-date">{formatDate(t.createdAt)}</span>
-                    </div>
-                    <span className={`tx-amount tx-amount--${t.type}`}>
-                      {t.type === 'income' ? '+' : '−'}{formatCurrency(t.amount, currency)}
-                    </span>
-                  </li>
-                ))}
+                {transactions.slice(0, 8).map(t => {
+                  const TxIcon = CATEGORY_ICONS[t.category] || Box;
+                  return (
+                    <li key={t.id} className="transaction-item">
+                      <div className="tx-icon"><TxIcon size={18} /></div>
+                      <div className="tx-details">
+                        <span className="tx-category">{t.category}</span>
+                        {t.description && <span className="tx-desc">{t.description}</span>}
+                        <span className="tx-date">{formatDate(t.createdAt)}</span>
+                      </div>
+                      <span className={`tx-amount tx-amount--${t.type}`}>
+                        {t.type === 'income' ? '+' : '−'}{formatCurrency(t.amount, currency)}
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
@@ -854,18 +922,24 @@ export default function Dashboard() {
                     }, {})
                 )
                   .sort((a, b) => b[1] - a[1])
-                  .map(([cat, amt]) => (
-                    <div key={cat} className="breakdown-row">
-                      <span>{CATEGORY_ICONS[cat]} {cat}</span>
-                      <span>{formatCurrency(amt, currency)}</span>
-                      <div className="breakdown-bar-track">
-                        <div
-                          className="breakdown-bar"
-                          style={{ width: `${(amt / totalExpenses) * 100}%` }}
-                        />
+                  .map(([cat, amt]) => {
+                    const CatIcon = CATEGORY_ICONS[cat] || Box;
+                    return (
+                      <div key={cat} className="breakdown-row">
+                        <span className="breakdown-cat" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                          <CatIcon size={14} className="breakdown-icon" />
+                          {cat}
+                        </span>
+                        <span>{formatCurrency(amt, currency)}</span>
+                        <div className="breakdown-bar-track">
+                          <div
+                            className="breakdown-bar"
+                            style={{ width: `${(amt / totalExpenses) * 100}%` }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
               </div>
             )}
           </div>

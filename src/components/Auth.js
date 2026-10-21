@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword
 } from "firebase/auth";
 import { auth, db } from "../firebase";
+import { Wallet, User, Mail, Lock, Eye, EyeOff, Key, AlertTriangle } from 'lucide-react';
 
 export default function ExpenseTrackerAuth({ onAuthSuccess }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -78,7 +79,7 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
 
         {/* Brand */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">📊</div>
+          <div className="auth-logo-icon"><Wallet size={24} /></div>
           <h1>Expense Flow</h1>
         </div>
 
@@ -103,13 +104,18 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
-          {error && <div className="error">{error}</div>}
+          {error && (
+            <div className="error">
+              <AlertTriangle size={16} className="error-icon" />
+              {error}
+            </div>
+          )}
 
           {/* Name — only on Sign Up */}
           {!isLogin && (
             <div className="form-group">
               <div className="input-wrapper">
-                <span className="input-icon">👤</span>
+                <span className="input-icon"><User size={18} /></span>
                 <input
                   type="text"
                   name="name"
@@ -126,7 +132,7 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
           {/* Email */}
           <div className="form-group">
             <div className="input-wrapper">
-              <span className="input-icon">✉️</span>
+              <span className="input-icon"><Mail size={18} /></span>
               <input
                 type="email"
                 name="email"
@@ -142,7 +148,7 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
           {/* Password */}
           <div className="form-group">
             <div className="input-wrapper">
-              <span className="input-icon">🔒</span>
+              <span className="input-icon"><Lock size={18} /></span>
               <input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
@@ -160,7 +166,7 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 tabIndex={-1}
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
@@ -169,7 +175,7 @@ export default function ExpenseTrackerAuth({ onAuthSuccess }) {
           {!isLogin && (
             <div className="form-group">
               <div className="input-wrapper">
-                <span className="input-icon">🔑</span>
+                <span className="input-icon"><Key size={18} /></span>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="confirmPassword"

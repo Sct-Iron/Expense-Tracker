@@ -99,7 +99,7 @@ body {
 
 .settings-btn:hover { background: #e5e7eb; }
 
-.settings-icon { font-size: 1.05rem; line-height: 1; }
+.settings-icon { display: inline-flex; align-items: center; justify-content: center; }
 
 /* Settings modal specific */
 .modal-header--settings { background: #374151; }
@@ -188,7 +188,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
 }
 
 .card-icon-circle {
@@ -198,8 +197,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  font-weight: 700;
   margin-bottom: 0.35rem;
 }
 
@@ -299,8 +296,11 @@ body {
 }
 
 .empty-icon {
-  font-size: 2.5rem;
-  opacity: 0.5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  opacity: 0.6;
 }
 
 /* ── Quick Actions ── */
@@ -467,6 +467,27 @@ body {
   list-style: none; margin: 0; padding: 0;
   display: flex; flex-direction: column; gap: 0.5rem;
   max-height: 340px; overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #a5b4fc #f3f4f6;
+}
+
+.transaction-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.transaction-list::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 999px;
+}
+
+.transaction-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a5b4fc, #6366f1);
+  border: 2px solid #f3f4f6;
+  border-radius: 999px;
+}
+
+.transaction-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #818cf8, #4f46e5);
 }
 
 .transaction-item {
@@ -477,7 +498,18 @@ body {
 }
 .transaction-item:hover { background: #f3f4f6; }
 
-.tx-icon { font-size: 1.4rem; width: 2rem; text-align: center; flex-shrink: 0; }
+.tx-icon {
+  width: 2rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6366f1;
+}
+
+.dark .tx-icon {
+  color: #a5b4fc;
+}
 
 .tx-details {
   flex: 1; display: flex; flex-direction: column; gap: 0.1rem;
@@ -708,6 +740,23 @@ body {
 
 /* ───────── Transactions ───────── */
 
+.dark .transaction-list {
+  scrollbar-color: #4f46e5 #111827;
+}
+
+.dark .transaction-list::-webkit-scrollbar-track {
+  background: #111827;
+}
+
+.dark .transaction-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #818cf8, #4f46e5);
+  border-color: #111827;
+}
+
+.dark .transaction-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a5b4fc, #6366f1);
+}
+
 .dark .transaction-item {
   background: #071224;
 }
@@ -859,8 +908,14 @@ body {
 }
 
 .budget-icon {
-  font-size: 1.4rem;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6366f1;
+}
+
+.dark .budget-icon {
+  color: #a5b4fc;
 }
 
 .budget-category {
@@ -906,22 +961,58 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 0.95rem;
-  padding: 0.2rem 0.3rem;
+  padding: 0.35rem;
   border-radius: 6px;
-  transition: background 0.1s;
+  transition: background 0.1s, color 0.1s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
 }
 
 .budget-action-btn:hover {
   background: #f3f4f6;
+  color: #111827;
 }
 
 .budget-action-btn--delete:hover {
   background: #fee2e2;
+  color: #dc2626;
+}
+
+.dark .budget-action-btn {
+  color: #9ca3af;
 }
 
 .dark .budget-action-btn:hover {
   background: #374151;
+  color: #f9fafb;
+}
+
+.dark .budget-action-btn--delete:hover {
+  background: #451a1a;
+  color: #fca5a5;
+}
+
+/* Category breakdown styles */
+.breakdown-cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #374151;
+}
+
+.dark .breakdown-cat {
+  color: #cbd5e1;
+}
+
+.breakdown-icon {
+  color: #6366f1;
+  flex-shrink: 0;
+}
+
+.dark .breakdown-icon {
+  color: #a5b4fc;
 }
 
 .budget-amounts {
