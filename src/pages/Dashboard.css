@@ -119,13 +119,131 @@ body {
 
 .currency-select {
   width: 100%;
-  padding: 0.6rem 0.9rem;
-  border-radius: 10px;
-  border: 1.5px solid #e5e7eb;
+  padding: 0.75rem 2.75rem 0.75rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid #dbe1ea;
+  background-color: #fff;
   font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
   outline: none;
+  appearance: none;
+  cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, #6366f1 50%), linear-gradient(135deg, #6366f1 50%, transparent 50%);
+  background-position: calc(100% - 1.15rem) 50%, calc(100% - 0.8rem) 50%;
+  background-size: 0.35rem 0.35rem, 0.35rem 0.35rem;
+  background-repeat: no-repeat;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
 }
-.currency-select:focus { border-color: #6366f1; }
+.currency-select:hover,
+select.field-input:hover { border-color: #a5b4fc; }
+.currency-select:focus,
+select.field-input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
+}
+
+/* Custom currency picker */
+.currency-select { display: none; }
+.currency-dropdown { position: relative; width: 100%; }
+.currency-dropdown-trigger {
+  width: 100%;
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border: 1.5px solid #dbe1ea;
+  border-radius: 14px;
+  background: #fff;
+  color: #1f2937;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+.currency-dropdown-trigger:hover,
+.currency-dropdown--open .currency-dropdown-trigger {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14);
+}
+.currency-dropdown-trigger:disabled { opacity: 0.65; cursor: not-allowed; }
+.currency-flag {
+  width: 38px;
+  height: 28px;
+  flex: 0 0 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: #eef2ff;
+  font-size: 1.45rem;
+  line-height: 1;
+  overflow: hidden;
+}
+.currency-selected-copy,
+.currency-option-copy { min-width: 0; display: flex; flex-direction: column; gap: 0.15rem; }
+.currency-selected-copy strong { font-size: 1rem; }
+.currency-selected-copy small,
+.currency-option-copy small { color: #6b7280; font-size: 0.75rem; font-weight: 600; }
+.currency-chevron { margin-left: auto; color: #6366f1; transition: transform 0.2s; }
+.currency-dropdown--open .currency-chevron { transform: rotate(180deg); }
+.currency-dropdown-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.65rem);
+  left: 0;
+  right: 0;
+  padding: 0.8rem;
+  border: 1px solid #dbe1ea;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+  animation: currency-menu-in 0.16s ease-out;
+}
+@keyframes currency-menu-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.currency-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #dbe1ea;
+  border-radius: 11px;
+  color: #94a3b8;
+  margin-bottom: 0.6rem;
+}
+.currency-search-wrap input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #1f2937;
+  font: inherit;
+}
+.currency-options { max-height: 250px; overflow-y: auto; }
+.currency-option {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 0.65rem;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #1f2937;
+  text-align: left;
+  cursor: pointer;
+}
+.currency-option:hover { background: #eef2ff; }
+.currency-option--selected {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #fff;
+}
+.currency-option--selected .currency-option-copy small { color: #dbeafe; }
+.currency-option--selected .currency-flag { background: rgba(255, 255, 255, 0.18); }
+.currency-option > svg { margin-left: auto; }
+.currency-empty { padding: 0.8rem; color: #6b7280; text-align: center; font-size: 0.9rem; }
 
 /* ── Dashboard layout ── */
 .dashboard-container {
@@ -390,8 +508,11 @@ body {
   margin: 1rem;
   box-shadow: 0 25px 60px rgba(0,0,0,0.2);
   animation: slideUp 0.2s ease;
-  overflow: hidden;
+  overflow: visible;
 }
+
+.modal-header { border-radius: 16px 16px 0 0; }
+.modal-footer { border-radius: 0 0 16px 16px; }
 
 @keyframes slideUp {
   from { transform: translateY(20px); opacity: 0 }
@@ -438,6 +559,30 @@ body {
   box-sizing: border-box;
 }
 .field-input:focus { border-color: #6366f1; }
+
+select.field-input {
+  display: none;
+}
+
+select.field-input {
+  padding: 0.75rem 2.75rem 0.75rem 1rem;
+  border-radius: 12px;
+  border-color: #dbe1ea;
+  background-color: #fff;
+  font-weight: 600;
+  color: #1f2937;
+  appearance: none;
+  cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, #6366f1 50%), linear-gradient(135deg, #6366f1 50%, transparent 50%);
+  background-position: calc(100% - 1.15rem) 50%, calc(100% - 0.8rem) 50%;
+  background-size: 0.35rem 0.35rem, 0.35rem 0.35rem;
+  background-repeat: no-repeat;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+select.field-input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
 
 .modal-footer {
   display: flex; gap: 0.75rem; padding: 1rem 1.5rem 1.5rem;
@@ -626,6 +771,75 @@ body {
   background: #0b1220;
   color: #e6eef6;
   border-color: #1f2937;
+}
+
+.dark .currency-select,
+.dark select.field-input {
+  background-color: #0b1220;
+  color: #e6eef6;
+  border-color: #334155;
+}
+
+.dark .currency-dropdown-trigger,
+.dark .currency-dropdown-menu {
+  background: #0f1724;
+  color: #e6eef6;
+  border-color: #334155;
+}
+.dark .currency-dropdown-trigger:hover,
+.dark .currency-dropdown--open .currency-dropdown-trigger {
+  border-color: #6366f1;
+}
+.dark .currency-selected-copy small,
+.dark .currency-option-copy small,
+.dark .currency-empty { color: #94a3b8; }
+.dark .currency-search-wrap { border-color: #334155; }
+.dark .currency-search-wrap input,
+.dark .currency-option { color: #e6eef6; }
+.dark .currency-option:hover { background: #1e293b; }
+
+/* Compact custom dropdown treatment */
+.currency-dropdown-trigger {
+  min-height: 46px;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  gap: 0.6rem;
+}
+.currency-dropdown-trigger .currency-flag,
+.currency-option .currency-flag,
+.currency-search-wrap { display: none; }
+.currency-selected-copy { display: block; }
+.currency-selected-copy strong { font-size: 0.95rem; }
+.currency-selected-copy small { display: none; }
+.currency-dropdown-menu {
+  top: calc(100% + 0.4rem);
+  padding: 0.35rem;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14);
+}
+.currency-options {
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c7d2fe transparent;
+}
+.currency-option {
+  min-height: 40px;
+  padding: 0.55rem 0.7rem;
+  border-radius: 7px;
+  font-size: 0.95rem;
+}
+.currency-option-copy { display: block; }
+.currency-option-copy small { display: none; }
+.currency-option--selected {
+  background: #eef2ff;
+  color: #4338ca;
+}
+.currency-option--selected .currency-option-copy small { color: #4338ca; }
+.currency-option--selected .currency-flag { background: transparent; }
+.dark .currency-option--selected {
+  background: #312e81;
+  color: #e0e7ff;
 }
 
 

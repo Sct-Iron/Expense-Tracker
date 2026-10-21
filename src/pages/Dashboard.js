@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import {
@@ -21,7 +21,7 @@ import {
   Laptop,
   TrendingUp,
   Gift,
-  Box,
+  Tag,
   Pencil,
   Trash2,
   AlertTriangle,
@@ -32,7 +32,10 @@ import {
   PiggyBank,
   Target,
   Receipt,
-  X
+  X,
+  ChevronDown,
+  Check,
+  Search
 } from 'lucide-react';
 
 // ── Modal ─────────────────────────────────────────────────────────────────────
@@ -102,6 +105,12 @@ function AddTransactionModal({ type, onClose, onSave, currency, customCategories
           />
 
           <label className="field-label">Category</label>
+          <CustomDropdown
+            value={category}
+            placeholder="— Select —"
+            options={categories.map(option => ({ value: option, label: option }))}
+            onChange={next => { setCategory(next); setCustomCat(''); }}
+          />
           <select
             className="field-input"
             value={category}
@@ -195,6 +204,13 @@ function AddBudgetModal({ onClose, onSave, currency, existingBudget, customCateg
           {error && <div className="modal-error">{error}</div>}
 
           <label className="field-label">Category</label>
+          <CustomDropdown
+            value={category}
+            placeholder="— Select —"
+            options={allCategories.map(option => ({ value: option, label: option }))}
+            onChange={next => { setCategory(next); setCustomCat(''); }}
+            disabled={!!existingBudget}
+          />
           <select
             className="field-input"
             value={category}
@@ -219,6 +235,15 @@ function AddBudgetModal({ onClose, onSave, currency, existingBudget, customCateg
           )}
 
           <label className="field-label">Budget Period</label>
+          <CustomDropdown
+            value={period}
+            options={[
+              { value: 'weekly', label: 'Weekly' },
+              { value: 'monthly', label: 'Monthly' },
+              { value: 'yearly', label: 'Yearly' }
+            ]}
+            onChange={setPeriod}
+          />
           <select
             className="field-input"
             value={period}
@@ -259,6 +284,159 @@ function AddBudgetModal({ onClose, onSave, currency, existingBudget, customCateg
 }
 
 // ── Settings Modal ──────────────────────────────────────────────────────────
+
+function CurrencyDropdown({ value, onChange, disabled = false }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const dropdownRef = useRef(null);
+  const options = [
+    { code: 'NGN', name: 'Nigerian Naira', symbol: '₦', flag: '🇳🇬' },
+    { code: 'USD', name: 'US Dollar', symbol: '$', flag: '🇺🇸' },
+    { code: 'GBP', name: 'British Pound', symbol: '£', flag: '🇬🇧' },
+    { code: 'EUR', name: 'Euro', symbol: '€', flag: '🇪🇺' },
+    { code: 'JPY', name: 'Japanese Yen', symbol: '¥', flag: '🇯🇵' }
+  ];
+  const selected = options.find(option => option.code === value) || options[1];
+  const filteredOptions = options.filter(option =>
+    `${option.code} ${option.name}`.toLowerCase().includes(search.toLowerCase())
+  );
+
+  useEffect(() => {
+    const closeOnOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, []);
+
+  const chooseCurrency = (code) => {
+    setOpen(false);
+    setSearch('');
+    onChange(code);
+  };
+
+  return (
+    <div className={`currency-dropdown ${open ? 'currency-dropdown--open' : ''}`} ref={dropdownRef}>
+      <button
+        type="button"
+        className="currency-dropdown-trigger"
+        onClick={() => !disabled && setOpen(current => !current)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        disabled={disabled}
+      >
+        <span className="currency-flag" aria-hidden="true">{selected.flag}</span>
+        <span className="currency-selected-copy">
+          <strong>{selected.name}</strong>
+          <small>{selected.code} · {selected.symbol}</small>
+        </span>
+        <ChevronDown className="currency-chevron" size={20} />
+      </button>
+
+      {open && (
+        <div className="currency-dropdown-menu" role="listbox" aria-label="Currencies">
+          <div className="currency-search-wrap">
+            <Search size={18} aria-hidden="true" />
+            <input
+              autoFocus
+              type="search"
+              value={search}
+              onChange={event => setSearch(event.target.value)}
+              placeholder="Search currency..."
+              aria-label="Search currency"
+            />
+          </div>
+          <div className="currency-options">
+            {filteredOptions.length > 0 ? filteredOptions.map(option => (
+              <button
+                type="button"
+                role="option"
+                aria-selected={option.code === value}
+                className={`currency-option ${option.code === value ? 'currency-option--selected' : ''}`}
+                key={option.code}
+                onClick={() => chooseCurrency(option.code)}
+              >
+                <span className="currency-flag" aria-hidden="true">{option.flag}</span>
+                <span className="currency-option-copy">
+                  <strong>{option.name}</strong>
+                  <small>{option.code} · {option.symbol}</small>
+                </span>
+                {option.code === value && <Check size={19} />}
+              </button>
+            )) : (
+              <p className="currency-empty">No currencies found</p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CustomDropdown({ value, onChange, options, placeholder = 'Select', disabled = false }) {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const selected = options.find(option => option.value === value);
+
+  useEffect(() => {
+    const closeOnOutsideClick = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) setOpen(false);
+    };
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', closeOnOutsideClick);
+    document.addEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('mousedown', closeOnOutsideClick);
+      document.removeEventListener('keydown', closeOnEscape);
+    };
+  }, []);
+
+  return (
+    <div className={`currency-dropdown ${open ? 'currency-dropdown--open' : ''}`} ref={dropdownRef}>
+      <button
+        type="button"
+        className="currency-dropdown-trigger"
+        onClick={() => !disabled && setOpen(current => !current)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        disabled={disabled}
+      >
+        <span className="currency-selected-copy">
+          <strong>{selected ? selected.label : placeholder}</strong>
+        </span>
+        <ChevronDown className="currency-chevron" size={18} />
+      </button>
+      {open && (
+        <div className="currency-dropdown-menu" role="listbox">
+          <div className="currency-options">
+            {options.map(option => (
+              <button
+                type="button"
+                role="option"
+                aria-selected={option.value === value}
+                className={`currency-option ${option.value === value ? 'currency-option--selected' : ''}`}
+                key={option.value}
+                onClick={() => { onChange(option.value); setOpen(false); }}
+              >
+                <span className="currency-option-copy"><strong>{option.label}</strong></span>
+                {option.value === value && <Check size={17} />}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function SettingsModal({ onClose, currency, setCurrency, user }) {
   const [theme, setTheme] = useState(() => {
@@ -301,6 +479,22 @@ function SettingsModal({ onClose, currency, setCurrency, user }) {
           <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>Application preferences</p>
 
           <label className="field-label">Change Currency</label>
+          <CurrencyDropdown
+            value={currency}
+            disabled={changing}
+            onChange={async (next) => {
+              setChangeError('');
+              if (next === currency) return;
+              setChanging(true);
+              try {
+                if (typeof setCurrency === 'function') await setCurrency(next, setChangeError);
+              } catch (err) {
+                setChangeError(err?.message || 'Failed to change currency');
+              } finally {
+                setChanging(false);
+              }
+            }}
+          />
           <select
             className="currency-select"
             value={currency}
@@ -379,7 +573,7 @@ const CATEGORY_ICONS = {
   Freelance: Laptop,
   Investment: TrendingUp,
   Gift: Gift,
-  Other: Box
+  Other: Tag
 };
 
 const CURRENCY_SYMBOLS = {
@@ -438,7 +632,7 @@ function BudgetCard({ budget, transactions, currency, onEdit, onDelete }) {
         <div className="budget-card-title">
           <span className="budget-icon">
             {(() => {
-              const IconComponent = CATEGORY_ICONS[budget.category] || Box;
+              const IconComponent = CATEGORY_ICONS[budget.category] || Tag;
               return <IconComponent size={20} />;
             })()}
           </span>
@@ -876,7 +1070,7 @@ export default function Dashboard() {
             ) : (
               <ul className="transaction-list">
                 {transactions.slice(0, 8).map(t => {
-                  const TxIcon = CATEGORY_ICONS[t.category] || Box;
+                  const TxIcon = CATEGORY_ICONS[t.category] || Tag;
                   return (
                     <li key={t.id} className="transaction-item">
                       <div className="tx-icon"><TxIcon size={18} /></div>
@@ -923,7 +1117,7 @@ export default function Dashboard() {
                 )
                   .sort((a, b) => b[1] - a[1])
                   .map(([cat, amt]) => {
-                    const CatIcon = CATEGORY_ICONS[cat] || Box;
+                    const CatIcon = CATEGORY_ICONS[cat] || Tag;
                     return (
                       <div key={cat} className="breakdown-row">
                         <span className="breakdown-cat" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
